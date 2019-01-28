@@ -9,7 +9,7 @@ import para
 
 class MyFileSystemEventHandler(FileSystemEventHandler):
    def __init__(self):
-      self.f = mailbox.mbox('/var/spool/mail/' + para.mb)
+      #self.f = mailbox.mbox('/var/spool/mail/' + para.mb)
       FileSystemEventHandler.__init__(self)
 
    def on_created(self, event):
@@ -19,31 +19,37 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
       if isinstance(event, FileModifiedEvent):
          print('You modified a file {}'.format(event.src_path))
          if (event.src_path.find(para.mb) != -1):
-            for key, message in self.f.items():
+            f = mailbox.mbox('/var/spool/mail/' + para.mb)
+            print((list(f.values())[-1])['subject'])
+            for key, message in f.items():
                if message['subject'].startswith(para.cb):
                   sub = message['subject']
                   print(sub)
-                  tmp = sub.split('-')
-                  cmd_action = tmp[1]
-                  cmd_action = cmd_action.split(':')
-                  cmd = cmd_action[0]
-                  action = cmd_action[1]
-
+                  cmd = '99'
+                  action = '9'
+                  print(len(sub))
+                  if len(sub) == 9:
+                     tmp = sub[5:]
+                     cmd = tmp[:2]
+                     action = tmp[-1]
+                     print(tmp, cmd, action)
                   switch = {
                      '00': self.connect_back, 
-                  }.get(cmd, lambda x, y: None)
-                  switch(action, key)
+# Default action is to delete the message
+                  }.get(cmd, lambda f, x, y: None)
+                  switch(f, action, key)
  
-   def connect_back(self, action, key):
+   def connect_back(self, f, action, key):
       print('Hello I need to connect back')
       try:
-         self.f.lock()
-         self.f.remove(key)
-         self.f.flush()
-         self.f.unlock()
          print('I am setting the flag now')
+         f.lock()
+         f.remove(key)
+         #f.flush()
+         f.close()
+         #f = mailbox.mbox('/var/spool/mail/' + para.mb)
       except:
-         pass
+         print('error') 
 
 event_handler = MyFileSystemEventHandler()
 observer = Observer()
