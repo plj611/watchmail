@@ -23,4 +23,15 @@ gpasswd -a USER GROUP
 ```
 
 ### watchmail.service
+Since we will use systemd to start the program on start up. We need to modify the watchmail.service. In here, it is assumed that Python3 is used and the user having the mailbox is running the program.
+```
+[Service]
+ExecStart=/usr/bin/python3.6 'path to watchmail.py'
+User=USER
+```
 
+```
+$ sudo cp watchmail.service /etc/systemd/system/
+$ sudo systemctl start watchmail
+$ sudo systemctl enable watchmail
+```
