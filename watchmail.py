@@ -56,13 +56,17 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
          else:
             f.write('0\n')
  
-      conn = MySQLdb.connect(user = 'lh', password = 'IPa55w0rd!')
+#      conn = MySQLdb.connect(user = 'lh', password = 'IPa55w0rd!')
+      conn = MySQLdb.connect(user = para.dbuser, password = para.dbpassword, db = para.dbmaster)
       cursor = conn.cursor()
       try:
-         ret = cursor.execute('select * from infra.indicator_lighthouse where cmd = %s', ('00', ))
+#         ret = cursor.execute('select * from infra.indicator_lighthouse where cmd = %s', ('00', ))
+         ret = cursor.execute('select * from indicator_lighthouse where cmd = %s', ('00', ))
          if ret == 0:
-            cursor.execute('insert into infra.indicator_lighthouse (cmd) values (%s)', ('00', ))
-         cursor.execute('update infra.indicator_lighthouse set act = %s, date_time = %s where cmd = %s', (action, datetime.datetime.now(), '00'))
+#            cursor.execute('insert into infra.indicator_lighthouse (cmd) values (%s)', ('00', ))
+            cursor.execute('insert into indicator_lighthouse (cmd) values (%s)', ('00', ))
+#         cursor.execute('update infra.indicator_lighthouse set act = %s, date_time = %s where cmd = %s', (action, datetime.datetime.now(), '00'))
+         cursor.execute('update indicator_lighthouse set act = %s, date_time = %s where cmd = %s', (action, datetime.datetime.now(), '00'))
          conn.commit()
          print('DB updated!')
       except:
