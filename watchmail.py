@@ -69,7 +69,7 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
 #         cursor.execute('update indicator_lighthouse set act = %s, date_time = %s where cmd = %s', (action, datetime.datetime.now(), '00'))
 
         
-         cursor.execute('insert into indicator_lighthouse (cmd, act, create_date_time) values (%s, %s, %s)', ('00', action, datetime.datetime.now()))
+         cursor.execute('insert into indicator_lighthouse (cmd, act, create_date_time) values (%s, %s, %s)', ('00', action, datetime.datetime.utcnow()))
          conn.commit()
          print('DB updated!')
       except:
