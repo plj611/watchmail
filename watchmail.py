@@ -23,19 +23,19 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
          print('You modified a file {}'.format(event.src_path))
          if (event.src_path.find(para.mb) != -1):
             f = mailbox.mbox('/var/spool/mail/' + para.mb)
-            print((list(f.values())[-1])['subject'])
+            #print((list(f.values())[-1])['subject'])
             for key, message in f.items():
                if message['subject'].startswith(para.cb):
                   sub = message['subject']
-                  print(sub)
+                  print('Subject of email: {}'.format(sub))
                   cmd = '99'
                   action = '9'
-                  print(len(sub))
+                  #print(len(sub))
                   if len(sub) == (5 + len(para.cb)):
                      tmp = sub[5:]
                      cmd = tmp[:2]
                      action = tmp[-1]
-                     print(tmp, cmd, action)
+                     print('Whole: {} Cmd: {} Action: {}'.format(tmp, cmd, action))
                   switch = {
                      '00': self.connect_back, 
                   }.get(cmd, lambda x: None)
@@ -61,12 +61,15 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
       cursor = conn.cursor()
       try:
 #         ret = cursor.execute('select * from infra.indicator_lighthouse where cmd = %s', ('00', ))
-         ret = cursor.execute('select * from indicator_lighthouse where cmd = %s', ('00', ))
-         if ret == 0:
+#         ret = cursor.execute('select * from indicator_lighthouse where cmd = %s', ('00', ))
+#         if ret == 0:
 #            cursor.execute('insert into infra.indicator_lighthouse (cmd) values (%s)', ('00', ))
-            cursor.execute('insert into indicator_lighthouse (cmd) values (%s)', ('00', ))
+#            cursor.execute('insert into indicator_lighthouse (cmd) values (%s)', ('00', ))
 #         cursor.execute('update infra.indicator_lighthouse set act = %s, date_time = %s where cmd = %s', (action, datetime.datetime.now(), '00'))
-         cursor.execute('update indicator_lighthouse set act = %s, date_time = %s where cmd = %s', (action, datetime.datetime.now(), '00'))
+#         cursor.execute('update indicator_lighthouse set act = %s, date_time = %s where cmd = %s', (action, datetime.datetime.now(), '00'))
+
+        
+         cursor.execute('insert into indicator_lighthouse (cmd, act, create_date_time) values (%s, %s, %s)', ('00', action, datetime.datetime.now()))
          conn.commit()
          print('DB updated!')
       except:
