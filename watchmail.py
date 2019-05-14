@@ -36,10 +36,13 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
                      cmd = tmp[:2]
                      action = tmp[-1]
                      print('Whole: {} Cmd: {} Action: {}'.format(tmp, cmd, action))
-                  switch = {
-                     '00': self.connect_back, 
-                  }.get(cmd, lambda x: None)
-                  switch(action)
+#                  switch = {
+#                     '00': self.connect_back, 
+#                  }.get(cmd, lambda x: None)
+#                  switch(action)
+                 
+                  if cmd in ('00', '01', '02'):
+                     self.insert_db(cmd, action)
 
                   try:
                      f.lock()
@@ -48,13 +51,14 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
                   except:
                      print('error in working mbox')
  
-   def connect_back(self, action):
-      print('Hello I need to connect back')
-      with open(para.cb_flag, 'w') as f:
-         if action == '1':
-            f.write('1\n')
-         else:
-            f.write('0\n')
+#   def connect_back(self, action):
+   def insert_db(self, cmd, action):
+      print('Hello I need to insert in DB')
+#      with open(para.cb_flag, 'w') as f:
+#         if action == '1':
+#            f.write('1\n')
+#         else:
+#            f.write('0\n')
  
 #      conn = MySQLdb.connect(user = 'lh', password = 'IPa55w0rd!')
       conn = MySQLdb.connect(user = para.dbuser, password = para.dbpassword, db = para.dbmaster)
@@ -69,9 +73,9 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
 #         cursor.execute('update indicator_lighthouse set act = %s, date_time = %s where cmd = %s', (action, datetime.datetime.now(), '00'))
 
         
-         cursor.execute('insert into indicator_lighthouse (cmd, act, create_date_time) values (%s, %s, %s)', ('00', action, datetime.datetime.utcnow()))
+         cursor.execute('insert into indicator_lighthouse (cmd, act, create_date_time) values (%s, %s, %s)', (cmd, action, datetime.datetime.utcnow()))
          conn.commit()
-         print('DB updated!')
+         print('DB insert!')
       except:
          print('error in updating db')
          conn.rollback()
