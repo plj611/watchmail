@@ -41,7 +41,7 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
 #                  }.get(cmd, lambda x: None)
 #                  switch(action)
                  
-                  if cmd in ('00', '01', '02'):
+                  if cmd in ('00', '01', '02', '03', '04'):
                      self.insert_db(cmd, action)
 
                   try:
