@@ -25,7 +25,7 @@ class MyFileSystemEventHandler(FileSystemEventHandler):
             f = mailbox.mbox('/var/spool/mail/' + para.mb)
             #print((list(f.values())[-1])['subject'])
             for key, message in f.items():
-               if message['subject'].startswith(para.cb):
+               if message['subject'].lower().startswith(para.cb):
                   sub = message['subject']
                   print('Subject of email: {}'.format(sub))
                   cmd = '99'
